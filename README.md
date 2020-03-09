@@ -63,6 +63,7 @@ DATABASE_ROUTERS = (
 TEMPLATE_CONTEXT_PROCESSOR = ('django.context_processors.request',)
 ```
 
+
 **iv. Setting up middleware:**
 - Sits between the application and the database handelling each request/response cycle.
 - Hooks to modify Django request or response object.
@@ -76,4 +77,84 @@ MIDDLEWARE = [
     'tenant_schemas.middleware.TenantMiddleware', # ordering matters
     ...
 ]
+```
+
+**v. Create a Tenant Model:**
+- Create a new app: ``./manage.py startapp <app-name>``
+- Create a tenant model.
+
+```python
+from django.db import models
+from tenant_schemas.models import TenantMixin
+
+class Client(TenantMixin):
+    name = models.CharField(max_length=100)
+    paid_until = models.DateField()
+    on_trial = models.BooleanField()
+    created_on = models.DateField(auto_now_add=True)
+
+    # default true, schema will be automatically created and synced when it is saved
+    auto_create_schema = True
+```
+
+> When new object of Client will be created, new schema will be created automatically on saving the object.
+
+**vi. Configure Tenant and Shared Apps:**
+
+- Allows to separate the apps that are common and specific to all the tenant.
+- Defined using two settings called ``SHARED_APPS = (...,)
+`` and ``TENANT_APPS = (...,)``
+
+- Reference: [Configure Tenant And Shared Apps: Official](https://django-tenant-schemas.readthedocs.io/en/latest/install.html#configure-tenant-and-shared-applications)
+```python
+
+
+# make sure all of those apps are also listed in installed Apps
+
+INSTALLED_APPS = [
+    'tenant_schemas',
+    'customers',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.sites',
+    'django.contrib.staticfiles',
+]
+
+SHARED_APPS = (
+    'tenant_schemas', # mandatory, should always be before any django apps
+    'customers', # you must list the app where your tenant model resides in
+
+    'django.contrib.contenttypes',
+
+    # everything below here is optional
+    'django.contrib.sessions',
+    'django.contrib.auth',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.admin',
+)
+
+TENANT_APPS = (
+    'django.contrib.contenttypes',
+)
+```
+
+In the above settings, configuration for session, auth,sites, messaging and administration will be common for all the tenants, i.e those apps will be under the **public** schema.
+
+While there'll be separate contenttype for each of the tenants. 
+
+> Content types are Django's way of identifying database tables. Every Database table is represented as a row in the content type table which is created and maintained by Django. It can track all of the models installed in your Django-powered project, providing a high-level, generic interface for working with your models.
+
+***Source:***  [Wher to use contenttypes](https://django.cowhite.com/blog/where-should-we-use-content-types-and-generic-relations-in-django/), [The contenttypes framework: Django Docs
+](https://docs.djangoproject.com/en/3.0/ref/contrib/contenttypes/#module-django.contrib.contenttypes)
+
+**vi. Configure tenant-model:**
+- Specifying which model to be used for storing tenant's information. Generally those model are listed in SHARED_APPS. i.e in the ``public`` schema of postgres.
+
+
+```python
+TENANT_MODEL = 'customers.Client'
 ```
