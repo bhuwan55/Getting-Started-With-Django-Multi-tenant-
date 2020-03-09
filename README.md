@@ -181,4 +181,11 @@ TENANT_MODEL = 'customers.Client'
 - Create a tenant with specific schema: ``tenant = Cliet(domain_url='tenant.localhost.com', schema_name='public', name='Alban', paid_untill='2020-12-02', on_trial=False)``
 and save it ``tenant.save()``. In this case a separate schema will be created called tenant.
 
+## 5. Snapshoot:
+**1. Shared Schema Structure:**
+
+![Shared Schema](snap_shoots/shared_schemas(public).png)
+
+**2. Tenant specific schema structure**
+![Tenant Schema](snap_shoots/tenant_specific_apps.png)
 
