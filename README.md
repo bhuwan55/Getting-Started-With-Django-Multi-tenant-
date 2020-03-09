@@ -182,10 +182,14 @@ TENANT_MODEL = 'customers.Client'
 and save it ``tenant.save()``. In this case a separate schema will be created called tenant.
 
 ## 5. Snapshoot:
+
 **1. Shared Schema Structure:**
 
 ![Shared Schema](snap_shoots/shared_schemas(public).png)
 
+
+
 **2. Tenant specific schema structure**
+
 ![Tenant Schema](snap_shoots/tenant_specific_apps.png)
 
