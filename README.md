@@ -6,7 +6,9 @@ Package Used: [django-tenant-schemas](https://github.com/bernardopires/django-te
 
 ## 1. What's Multi-tencnay?
 - Single instance of the software and its supporting infrastructure serves multiple customers
+
 - Isolating one client's(tenant) data from another tenant
+
 - Used in application such as: [SaaS](https://searchcloudcomputing.techtarget.com/definition/Software-as-a-Service)
 
 ## 2. Approaches:
@@ -46,6 +48,7 @@ DATABASES = {
 
 **ii. Configure DATABASE ROUTER**
 - Database routing allows us to perform different operations(read, write, migrate) operations on different databases of our choice.
+
 - [Database Routing: Django Official](https://docs.djangoproject.com/en/3.0/topics/db/multi-db/#automatic-database-routing)
 ```python
 DATABASE_ROUTERS = (
@@ -66,6 +69,7 @@ TEMPLATE_CONTEXT_PROCESSOR = ('django.context_processors.request',)
 
 **iv. Setting up middleware:**
 - Sits between the application and the database handelling each request/response cycle.
+
 - Hooks to modify Django request or response object.
 
 -  Use middleware if you want to modify the request i.e ``HttpRequest`` object which is sent to the view. Or you might want to modify the ``HttpResponse`` object returned from the view before view executes.
@@ -81,6 +85,7 @@ MIDDLEWARE = [
 
 **v. Create a Tenant Model:**
 - Create a new app: ``./manage.py startapp <app-name>``
+
 - Create a tenant model.
 
 ```python
@@ -102,6 +107,7 @@ class Client(TenantMixin):
 **vi. Configure Tenant and Shared Apps:**
 
 - Allows to separate the apps that are common and specific to all the tenant.
+
 - Defined using two settings called ``SHARED_APPS = (...,)
 `` and ``TENANT_APPS = (...,)``
 
@@ -158,3 +164,21 @@ While there'll be separate contenttype for each of the tenants.
 ```python
 TENANT_MODEL = 'customers.Client'
 ```
+
+**vi. Migrating:**
+- Make migrations: ``./manage.py makemigrations``
+
+- Migrate the shared_applications: ``./manage.py migrate_schemas --shared`` because we don't want the tenant specific data to be migrated in the innitial migration. Tenant specific apps will be created everytime we create a tenant.
+
+## 4. Experimenting with our application
+
+- Drop into the django shel: ``./manage.py shell``
+
+- Import the customer model: ``from app_name.models import Client``
+
+- Create a tenant under the public schema: ``tenant = Cliet(domain_url='localhost.com', schema_name='public', name='Admin', paid_untill='2020-12-02', on_trial=False)`` and save it ``tenant.save()``. Here no new schema will be created as we're creating tenant under the public schema.
+
+- Create a tenant with specific schema: ``tenant = Cliet(domain_url='tenant.localhost.com', schema_name='public', name='Alban', paid_untill='2020-12-02', on_trial=False)``
+and save it ``tenant.save()``. In this case a separate schema will be created called tenant.
+
+
