@@ -176,9 +176,9 @@ TENANT_MODEL = 'customers.Client'
 
 - Import the customer model: ``from app_name.models import Client``
 
-- Create a tenant under the public schema: ``tenant = Cliet(domain_url='localhost.com', schema_name='public', name='Admin', paid_untill='2020-12-02', on_trial=False)`` and save it ``tenant.save()``. Here no new schema will be created as we're creating tenant under the public schema.
+- Create a tenant under the public schema: ``tenant = Cliet(domain_url='localhost.com', schema_name='public', name='Admin', paid_until='2020-12-02', on_trial=False)`` and save it ``tenant.save()``. Here no new schema will be created as we're creating tenant under the public schema.
 
-- Create a tenant with specific schema: ``tenant = Cliet(domain_url='tenant.localhost.com', schema_name='public', name='Alban', paid_untill='2020-12-02', on_trial=False)``
+- Create a tenant with specific schema: ``tenant = Cliet(domain_url='tenant.localhost.com', schema_name='public', name='Alban', paid_until='2020-12-02', on_trial=False)``
 and save it ``tenant.save()``. In this case a separate schema will be created called tenant.
 
 ## 5. Snapshoot:
